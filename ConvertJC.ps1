@@ -1,17 +1,5 @@
 ﻿Param([string]$YMD)
 
-# 和暦変換ハッシュテーブル
-$WarekiHash = @{
-	"h"		= "平成"
-	"s"		= "昭和"
-	"m"		= "明治"
-	"t"		= "大正"
-	"平成"	= "平成"
-	"昭和"	= "昭和"
-	"明治"	= "明治"
-	"大正"	= "大正"
-}
-
 
 ##################################################
 # 西暦から和暦に変換
@@ -21,8 +9,7 @@ function Convert2JapaneseCalendar([string]$YMD){
 
 	$InputDateTime = $YMD -as [datetime]
 	if( $InputDateTime -eq $null ){
-		echo "$InputDateTime は日付として認識できません)"
-		exit
+		retrun $null
 	}
 
 	$Cultureinfo = New-Object cultureinfo("ja-jp", $true)
@@ -38,15 +25,14 @@ function Convert2JapaneseCalendar([string]$YMD){
 function Convert2ChristianEra([string]$YMD){
 # 和暦 → 西暦
 	# 日付分解
-	if($YMD -match "(?<Gengo>^.+?)(?<YY>[0-9]+?).(?<MM>[0-9]+?).(?<DD>[0-9]+?)$"){
+	if($YMD -match "(?<Gengo>^.+?) *(?<YY>[0-9]+?) *. *(?<MM>[0-9]+?) *. *(?<DD>[0-9]+?) *$"){
 		# NOP
 	}
-	elseif($YMD -match "(?<Gengo>^.+?)(?<YY>[0-9]+?)年(?<MM>[0-9]+?)月(?<DD>[0-9]+?)日"){
+	elseif($YMD -match "(?<Gengo>^.+?) *(?<YY>[0-9]+?) *年 *(?<MM>[0-9]+?) *月 *(?<DD>[0-9]+?) *日"){
 		# NOP
 	}
 	else{
-		echo "$YMD は日付として認識出ません"
-		exit
+		retrun $null
 	}
 
 	$GG = $Matches.Gengo
@@ -54,10 +40,21 @@ function Convert2ChristianEra([string]$YMD){
 	$MM = $Matches.MM
 	$DD = $Matches.DD
 
+	# 和暦変換ハッシュテーブル
+	$WarekiHash = @{
+		"h"		= "平成"
+		"s"		= "昭和"
+		"m"		= "明治"
+		"t"		= "大正"
+		"平成"	= "平成"
+		"昭和"	= "昭和"
+		"明治"	= "明治"
+		"大正"	= "大正"
+	}
+
 	$Gengo = $WarekiHash[$GG]
 	if( $Gengo -eq $null ){
-		echo "$Gengo は和暦として認識出ませんでした"
-		exit
+		retrun $null
 	}
 
 	[string]$Wareki = $Gengo+$YY + "年" + $MM + "月" + $DD + "日"
@@ -85,5 +82,11 @@ else{
 	$OutputDateTime = Convert2ChristianEra $YMD
 }
 
-echo $OutputDateTime
+if( $OutputDateTime -eq $null ){
+	echo "[FAIL] $OutputDateTime は日付として認識できません"
+	exit
+}
+
+return $OutputDateTime
+
 
