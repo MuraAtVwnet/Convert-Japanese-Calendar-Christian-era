@@ -2,6 +2,23 @@
 
 
 ##################################################
+# 使用方法
+##################################################
+function Usage(){
+	echo "Usage..."
+	echo "    和暦 -> 西暦"
+	echo "        ConvJC.ps1 元号99/99/99"
+	echo "        ConvJC.ps1 元号99年99月99日"
+	echo "            元号: M/T/S/H/明治/大正/昭和/平成"
+
+	echo ""
+	echo "    和暦 -> 西暦"
+	echo "        ConvJC.ps1 9999/99/99"
+
+	exit
+}
+
+##################################################
 # 西暦から和暦に変換
 ##################################################
 function Convert2JapaneseCalendar([string]$YMD){
@@ -25,10 +42,10 @@ function Convert2JapaneseCalendar([string]$YMD){
 function Convert2ChristianEra([string]$YMD){
 # 和暦 → 西暦
 	# 日付分解
-	if($YMD -match "(?<Gengo>^.+?) *(?<YY>[0-9]+?) *. *(?<MM>[0-9]+?) *. *(?<DD>[0-9]+?) *$"){
+	if($YMD -match "(?<Gengo>^.+?)(?<YY>[0-9]+?).(?<MM>[0-9]+?).(?<DD>[0-9]+?) *$"){
 		# NOP
 	}
-	elseif($YMD -match "(?<Gengo>^.+?) *(?<YY>[0-9]+?) *年 *(?<MM>[0-9]+?) *月 *(?<DD>[0-9]+?) *日"){
+	elseif($YMD -match "(?<Gengo>^.+?)(?<YY>[0-9]+?)年(?<MM>[0-9]+?)月(?<DD>[0-9]+?)日"){
 		# NOP
 	}
 	else{
@@ -72,6 +89,16 @@ function Convert2ChristianEra([string]$YMD){
 ##################################################
 # Main
 ##################################################
+
+# 使用方法
+if( $YMD -eq [string]$null ){
+	Usage
+	exit
+}
+
+# 余分な空白を取り除く
+$YMD = $YMD.Replace(" ","")
+$YMD = $YMD.Replace("　","")
 
 if( $YMD[0] -match "[0-9]" ){
 	# 西暦が入力されたので和暦にする
