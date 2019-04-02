@@ -11,7 +11,7 @@ function Usage(){
 	echo "    和暦 -> 西暦"
 	echo "        ConvJC.ps1 元号99/99/99"
 	echo "        ConvJC.ps1 元号99年99月99日"
-	echo "            元号: M/T/S/H/明治/大正/昭和/平成"
+	echo "            元号: M/T/S/H/R/明治/大正/昭和/平成/令和"
 
 	echo ""
 	echo "    和暦 -> 西暦"
@@ -33,7 +33,13 @@ function Convert2JapaneseCalendar([string]$YMD){
 
 	$Cultureinfo = New-Object cultureinfo("ja-jp", $true)
 	$Cultureinfo.DateTimeFormat.Calendar = New-Object System.Globalization.JapaneseCalendar
-	$StingOutputDateTime = $InputDateTime.ToString("gy年M月d日", $Cultureinfo)
+	Try{
+		$StingOutputDateTime = $InputDateTime.ToString("gy年M月d日", $Cultureinfo)
+	}
+	catch{
+		echo "$YMD は日付として認識できません"
+		exit
+	}
 
 	return $StingOutputDateTime
 }
@@ -61,10 +67,12 @@ function Convert2ChristianEra([string]$YMD){
 
 	# 和暦変換ハッシュテーブル
 	$WarekiHash = @{
+		"r"		= "令和"
 		"h"		= "平成"
 		"s"		= "昭和"
 		"m"		= "明治"
 		"t"		= "大正"
+		"令和"	= "令和"
 		"平成"	= "平成"
 		"昭和"	= "昭和"
 		"明治"	= "明治"
@@ -80,7 +88,14 @@ function Convert2ChristianEra([string]$YMD){
 
 	$Cultureinfo = New-Object cultureinfo("ja-jp", $true)
 	$Cultureinfo.DateTimeFormat.Calendar = New-Object System.Globalization.JapaneseCalendar
-	$OutputDateTime = [datetime]::ParseExact($Wareki, "gy年M月d日", $Cultureinfo)
+
+	Try{
+		$OutputDateTime = [datetime]::ParseExact($Wareki, "gy年M月d日", $Cultureinfo)
+	}
+	catch{
+		echo "$YMD は日付として認識できません"
+		exit
+	}
 
 	$StingOutputDateTime = $OutputDateTime.ToString("yyyy/MM/dd")
 
