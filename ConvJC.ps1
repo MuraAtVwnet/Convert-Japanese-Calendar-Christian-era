@@ -57,7 +57,7 @@ function Convert2ChristianEra([string]$YMD){
 		# NOP
 	}
 	else{
-		retrun $null
+		return $null
 	}
 
 	$GG = $Matches.Gengo
@@ -81,7 +81,7 @@ function Convert2ChristianEra([string]$YMD){
 
 	$Gengo = $WarekiHash[$GG]
 	if( $Gengo -eq $null ){
-		retrun $null
+		return $null
 	}
 
 	[string]$Wareki = $Gengo+$YY + "年" + $MM + "月" + $DD + "日"
